@@ -23,4 +23,4 @@ def mmq(entradas: np.array, saidas: np.array, g: int):
 
     coeficientes = np.linalg.multi_dot([M_inv, s_xy])
 
-    return np.round(coeficientes, 3)
+    return coeficientes
