@@ -1,5 +1,6 @@
 __pycache__
 rodar_modelo.bat
 sandbox.ipynb
-configuracoes
-base_dados
+base_dados/*.xlsx
+relatorios
+funcoes/__pycache__
