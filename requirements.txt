@@ -1,5 +1,5 @@
-numpy==1.22.3
-openpyxl==3.0.9
-pandas==1.4.1
-streamlit==1.7.0
-streamlit-echarts==0.4.0
+numpy
+openpyxl
+pandas
+streamlit
+streamlit-echarts
