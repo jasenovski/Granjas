@@ -9,7 +9,7 @@ df = pd.read_excel(os.path.join("base_dados", "BaseDados.xlsx"), sheet_name=0, e
 
 st.title("Sistema de recomendação para data de abate de lote de animais")
 
-preco_carne = st.slider("Preço da carne animal (R$ / kg):", 3.0, 7.0, 5.3, 0.1)
+preco_carne = st.slider("Preço da carne animal (R$ / kg):", 3.0, 7.0, 6.1, 0.1)
 preco_racao = st.slider("Preço da ração animal (R$ / kg):", 0.80, 1.50, 0.90, 0.1)
 
 df["L"] = df["M"] * preco_carne - df["R"] * preco_racao
