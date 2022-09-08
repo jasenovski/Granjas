@@ -4,4 +4,4 @@ def polinomio(coefs, entrada):
     for i in range(grau, -1, -1):
         f += coefs[grau - i] * entrada ** i
     
-    return f
+    return f[0]

@@ -9,8 +9,8 @@ df = pd.read_excel(os.path.join("base_dados", "BaseDados.xlsx"), sheet_name=0, e
 
 st.title("Sistema de recomendação para data de abate de lote de animais")
 
-preco_carne = st.slider("Preço da carne animal (R$ / kg):", 3.0, 7.0, 6.1, 0.1)
-preco_racao = st.slider("Preço da ração animal (R$ / kg):", 0.80, 1.50, 0.90, 0.1)
+preco_carne = st.slider("Preço do Arroba:", 3.0, 8.0, 7.0, 0.1)
+preco_racao = st.slider("Custos de Produção:", 0.50, 1.50, 0.80, 0.1)
 
 df["L"] = df["M"] * preco_carne - df["R"] * preco_racao
 df = df.dropna(axis=0)
@@ -32,7 +32,7 @@ for g in range(2, 10):
     acerto_massas = r_quadrado.r_2(valores_exp=df["M"], valores_teo=massas)
     acerto_racoes = r_quadrado.r_2(valores_exp=df["R"], valores_teo=racoes)
 
-    if acerto_massas > 0.99 and acerto_racoes > 0.99:
+    if acerto_massas >= 0.99 and acerto_racoes >= 0.99:
       break
 
 if coefs_lucro[0] > 0:
@@ -48,17 +48,19 @@ racoes = list(np.round(racoes, 2).reshape(len(racoes)))
 t = 1
 lucros = []
 custos = []
+receitas = []
 ts_ate_negativo = []
 virou = False
 while True:
   lucros.append(polinomios.polinomio(coefs=coefs_lucro, entrada=int(t)))
   custos.append(preco_racao * polinomios.polinomio(coefs=coefs_racao, entrada=t))
-
+  receitas.append(preco_carne * polinomios.polinomio(coefs=coefs_massa, entrada=t))
   if len(lucros) > 1 and not virou:
     if lucros[-1] < lucros[-2]:
       t_ideal = t - 1
       lucro_maximo = float(lucros[-2])
-      custo_total = np.sum(custos)
+      custo_total = float(custos[-2])
+      receita_total = float(receitas[-2])
       virou = True
 
   if lucros[-1] < 0:
@@ -119,16 +121,15 @@ options = {
 
 st_echarts(options=options)
 
-col1, col2, col3 = st.columns(3)
-col1.metric("Data para Abate:", "{}".format(t_ideal))
-col2.metric("Lucro Maximo:", "R$ {:.2f}".format(lucro_maximo), "{:.0f}%".format(100 * lucro_maximo / custo_total))
-col3.metric("Custo Total:", "R$ {:.2f}".format(custo_total))
+col1, col2 = st.columns(2)
+col1.metric("Data ideal para abate:", "{}".format(t_ideal))
+col2.metric("Lucro Maximo:", "R$ {:.0f}".format(lucro_maximo), "{:.0f}%".format(100 * (receita_total - custo_total) / custo_total))
 
-st.title("Ração vs Engorda")
+st.title("Custos vs Massa Lote")
 
 options = {
   "title": {
-    "text": 'kg'
+    "text": ''
   },
   "tooltip": {
     "trigger": 'axis'
@@ -157,13 +158,13 @@ options = {
   },
   "series": [
     {
-      "name": 'Massa Animal',
+      "name": 'Massa Lote',
       "type": 'line',
       # "stack": 'Total',
       "data": list(df["M"])
     },
     {
-      "name": 'Massa de Ração',
+      "name": 'Custo',
       "type": 'line',
       # "stack": 'Total',
       "data": list(df["R"])
